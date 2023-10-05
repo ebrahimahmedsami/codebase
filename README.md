@@ -23,10 +23,18 @@ Roles, Permissions, Wallet, Chat....
 
 # Send Notification Firebase Example
 
-            (new SendFCM(User::class))
-            ->sendForAdmin(true)
-            ->sendForUsers(false)
-            ->sendNotification('test title','test body',User::first());
+     (new SendFCM(User::class))
+        ->sendForAdmin(true)
+        ->sendForUsers(false)
+        ->sendNotification('test title','test body',User::first());
+
+# Send Notification Example
+
+     ADMIN => Notification::sendnow($notifiables,new AdminNotification($notificationData)); >> will send via mail and database
+     CLIENT => Notification::sendnow($notifiables,new ClientNotification($notificationData)); >> will send via firebase and database
+     Notes
+     Supported Mediums in BaseNotification Class => ['mail', 'sms', 'firebase','pusher', 'database']
+     In BasNotification Class you can modify how each Medium Process or What it should transmit
 
 # Setting Module Example Set And Get
 
