@@ -27,6 +27,7 @@ use Illuminate\Http\Request;
 class AuthController extends Controller
 {
     use ApiResponseTrait;
+
     private $authClientService;
 
     private string $modelResource = ClientResource::class;
@@ -50,7 +51,7 @@ class AuthController extends Controller
     {
         return $this->respondWithModelData(
             new ClientResource(
-                $this->authClientService->login($request, adminAbilities())
+                $this->authClientService->login($request, clientAbilities())
             )
         );
     }
@@ -66,11 +67,13 @@ class AuthController extends Controller
      */
     public function register(RegisterClientRequest $request): JsonResponse
     {
-        return apiSuccess(
+        return $this->respondWithModelData(
             new ClientResource(
-                $this->authClientService->register($request,clientAbilities())
-            ),[],[],__('Registered Successfully'));
+                $this->authClientService->register($request, clientAbilities())
+            )
+        );
     }
+
     /**
      * Send OTP To Mobile Number.
      *
@@ -82,7 +85,11 @@ class AuthController extends Controller
      */
     public function sendOTP(SendOTPRequest $request): JsonResponse
     {
-        return apiSuccess(["verification_code" => $this->authClientService->sendOTP($request)->OTP],[],[], __("Verification Code Sent"));
+        return $this->respondWithArray([
+                "verification_code" =>
+                    $this->authClientService->sendOTP($request)->OTP
+            ]
+        );
     }
 
     /**
@@ -96,7 +103,11 @@ class AuthController extends Controller
      */
     public function resendOTP(Request $request): JsonResponse
     {
-        return apiSuccess(["verification_code" => $this->authClientService->resendOTP($request)->OTP],[],[], __("Verification Code Resent"));
+        return $this->respondWithArray([
+                "verification_code" =>
+                    $this->authClientService->resendOTP($request)->OTP
+            ]
+        );
     }
 
     /**
@@ -122,9 +133,9 @@ class AuthController extends Controller
      * @header Api-Version v1
      * @header Accept-Language ar
      */
-    public function resetpassword(ResetPasswordRequest $request):JsonResponse
+    public function resetpassword(ResetPasswordRequest $request): JsonResponse
     {
-        return $this->authClientService->resetPassword($request,clientAbilities());
+        return $this->authClientService->resetPassword($request, clientAbilities());
     }
 
     /**
@@ -138,7 +149,7 @@ class AuthController extends Controller
      */
     public function changePassword(ChangePasswordRequest $request): JsonResponse
     {
-        return $this->authClientService->changePassword($request,clientAbilities());
+        return $this->authClientService->changePassword($request, clientAbilities());
     }
 
     /**
@@ -152,10 +163,11 @@ class AuthController extends Controller
      */
     public function forgetPassword(ForgetPasswordRequest $request): JsonResponse
     {
-        return apiSuccess(
+        return $this->respondWithModelData(
             new ClientResource(
-                $this->authClientService->forgetPassword($request,clientAbilities())
-            ),[],[],__('Proccessed Successfully'));
+                $this->authClientService->forgetPassword($request, clientAbilities())
+            )
+        );
     }
 
     /**
@@ -169,10 +181,11 @@ class AuthController extends Controller
      */
     public function changeMobile(ChangeMobileRequest $request): JsonResponse
     {
-        return apiSuccess(
+        return $this->respondWithModelData(
             new ClientResource(
                 $this->authClientService->changeMobile($request)
-            ),[],[],__('Changed Successfully'));
+            )
+        );
     }
 
     /**
@@ -186,10 +199,11 @@ class AuthController extends Controller
      */
     public function profile(Request $request): JsonResponse
     {
-        return apiSuccess(
+        return $this->respondWithModelData(
             new ClientResource(
                 $this->authClientService->profile($request)
-            ),[],[],__('Data Found'));
+            )
+        );
     }
 
     /**
@@ -204,9 +218,9 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         $this->authClientService->logout($request);
-        return apiSuccess(
-            array()
-            ,[],[],__('Logged out Successfully'));
+        return $this->respondWithSuccess(
+            __('Logged out Successfully')
+        );
     }
 
     /**

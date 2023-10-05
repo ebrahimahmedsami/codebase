@@ -414,7 +414,7 @@ if (!function_exists('clientAbilities')) {
     /**
      * intial abilities set for client
      */
-    function clientAbilities(): array
+    function providerAbilitiesclientAbilities(): array
     {
         return [
             AbilitiesConstant::CLIENT,

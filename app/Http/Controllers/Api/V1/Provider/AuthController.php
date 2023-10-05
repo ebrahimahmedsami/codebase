@@ -13,6 +13,7 @@ use App\Http\Requests\Api\Auth\SendOTPRequest;
 use App\Http\Requests\Api\Auth\VerifyOTPRequest;
 use App\Http\Resources\Api\Auth\ProviderResource;
 use App\Services\Auth\AuthProviderService;
+use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -25,7 +26,11 @@ use Illuminate\Http\Request;
  */
 class AuthController extends Controller
 {
+    use ApiResponseTrait;
     private $authProviderService;
+
+    private string $modelResource = ProviderResource::class;
+    private array $relations = [];
 
     public function __construct(AuthProviderService $authProviderService)
     {
@@ -43,10 +48,11 @@ class AuthController extends Controller
      */
     public function login(LoginProviderRequest $request):JsonResponse
     {
-        return apiSuccess(
+        return $this->respondWithModelData(
             new ProviderResource(
-                $this->authProviderService->login($request,providerAbilities())
-            ),[],[],__('Logged in Successfully'));
+                $this->authProviderService->login($request, providerAbilities())
+            )
+        );
     }
 
     /**
@@ -60,10 +66,11 @@ class AuthController extends Controller
      */
     public function register(RegisterProviderRequest $request): JsonResponse
     {
-        return apiSuccess(
+        return $this->respondWithModelData(
             new ProviderResource(
-                $this->authProviderService->register($request,providerAbilities())
-            ),[],[],__('Registered Successfully'));
+                $this->authProviderService->register($request, providerAbilities())
+            )
+        );
     }
 
     /**
@@ -77,7 +84,11 @@ class AuthController extends Controller
      */
     public function sendOTP(SendOTPRequest $request): JsonResponse
     {
-        return apiSuccess(["verification_code" => $this->authProviderService->sendOTP($request)->OTP],[],[], __("Verification Code Sent"));
+        return $this->respondWithArray([
+            "verification_code" =>
+                    $this->authProviderService->sendOTP($request)->OTP
+            ]
+        );
     }
 
     /**
@@ -91,7 +102,11 @@ class AuthController extends Controller
      */
     public function resendOTP(Request $request): JsonResponse
     {
-        return apiSuccess(["verification_code" => $this->authProviderService->resendOTP($request)->OTP],[],[], __("Verification Code Resent"));
+        return $this->respondWithArray([
+            "verification_code" =>
+                    $this->authProviderService->resendOTP($request)->OTP
+            ]
+        );
     }
 
 
@@ -148,10 +163,11 @@ class AuthController extends Controller
      */
     public function forgetPassword(ForgetPasswordRequest $request): JsonResponse
     {
-        return apiSuccess(
+        return $this->respondWithModelData(
             new ProviderResource(
-                $this->authProviderService->forgetPassword($request,providerAbilities())
-            ),[],[],__('Proccessed Successfully'));
+                $this->authProviderService->forgetPassword($request, providerAbilities())
+            )
+        );
     }
 
     /**
@@ -165,10 +181,11 @@ class AuthController extends Controller
      */
     public function changeMobile(ChangeMobileRequest $request): JsonResponse
     {
-        return apiSuccess(
+        return $this->respondWithModelData(
             new ProviderResource(
                 $this->authProviderService->changeMobile($request)
-            ),[],[],__('Changed Successfully'));
+            )
+        );
     }
 
     /**
@@ -182,10 +199,11 @@ class AuthController extends Controller
      */
     public function profile(Request $request): JsonResponse
     {
-        return apiSuccess(
+        return $this->respondWithModelData(
             new ProviderResource(
                 $this->authProviderService->profile($request)
-            ),[],[],__('Data Found'));
+            )
+        );
     }
 
     /**
@@ -200,9 +218,9 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         $this->authProviderService->logout($request);
-        return apiSuccess(
-            array()
-            ,[],[],__('Logged out Successfully'));
+        return $this->respondWithSuccess(
+            __('Logged out Successfully')
+        );
     }
 
     /**
