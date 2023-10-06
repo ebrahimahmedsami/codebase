@@ -1,4 +1,4 @@
-<p align="center"><a href="https://laravel.com"
+<p align="center"><a href="https://www.linkedin.com/company/moltaqa/"
 target="_blank">
 <img src="https://scontent.fcai19-3.fna.fbcdn.net/v/t39.30808-6/295064610_450347597101663_8667352545573167439_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=a2f6c7&_nc_ohc=DclAfTKddr8AX_aagC5&_nc_ht=scontent.fcai19-3.fna&oh=00_AfCbqd6tDgsqs2y4grNdlX7vtIpczLSbqdQFB3aUqrkCSQ&oe=652594FA"></a></p>
 
@@ -8,7 +8,7 @@ target="_blank">
 
 **Moltaqa** Laravel Project Codebase For Back-end Team
 Which Has The Main Features like
-Roles, Permissions, Wallet, Chat....
+Roles, Permissions, Wallet, Chat, Notification(Mail,Pusher,Firebase,database), settings,images....
 
 # Chat Module Vendors
 1. [x] User
