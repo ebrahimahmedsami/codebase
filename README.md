@@ -1,4 +1,6 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<p align="center"><a href="https://laravel.com"
+target="_blank">
+<img src="https://scontent.fcai19-3.fna.fbcdn.net/v/t39.30808-6/295064610_450347597101663_8667352545573167439_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=a2f6c7&_nc_ohc=DclAfTKddr8AX_aagC5&_nc_ht=scontent.fcai19-3.fna&oh=00_AfCbqd6tDgsqs2y4grNdlX7vtIpczLSbqdQFB3aUqrkCSQ&oe=652594FA"></a></p>
 
 
 
@@ -40,3 +42,46 @@ Roles, Permissions, Wallet, Chat....
 
     GET => setting(key:'general',default:'default data');
     SET => setting(key:'general',value:'data');
+
+# Upload File With Collection Name Example
+
+    uploadImage
+    (
+        collectionName: 'avatar'
+        file: $request->file,
+        model: $user
+    )
+
+
+## Run Locally
+
+Clone the project
+
+```bash
+  git clone https://link-to-project
+```
+
+Go to the project directory
+
+```bash
+  cd my-project
+```
+
+Configure .env
+
+```bash
+  copy .env.example
+```
+
+Install Composer
+
+```bash
+  composer install
+```
+
+Start the server
+
+```bash
+  php artisan serve
+```
+    
