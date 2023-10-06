@@ -41,6 +41,9 @@ class BaseNotification extends Notification implements ShouldQueue
         if (in_array('firebase', $this->notificationVia)) {
             $via[] = 'firebase';
         }
+        if (in_array('pusher', $this->notificationVia)) {
+            $via[] = 'firebase';
+        }
         if (in_array('database', $this->notificationVia)) {
             $via[] = 'database';
         }
