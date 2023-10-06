@@ -1,16 +1,10 @@
 <?php
 
-use App\Classes\AbilitiesConstant;
-use App\Classes\DashboardModulesActionsConstant;
-use App\Classes\DashboardModulesConstant;
 use App\Mail\OTPMail;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Encryption\Encrypter;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Mail\SentMessage;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
@@ -24,6 +18,7 @@ if (!function_exists('getLocales')) {
         return $forSeeder ? ['ar' => 'ar_EG', 'en' => 'en_US'] : ['ar', 'en'];
     }
 }
+
 if (!function_exists('activeGuard')) {
 
     function activeGuard(): int|string|null
@@ -61,11 +56,11 @@ if (!function_exists('dynamicMultiLangValidationRules')) {
     }
 }
 
-if (!function_exists('createdAt')) {
+if (!function_exists('formattedCreatedAt')) {
     /**
      * @return string formated date
      */
-    function createdAt($created_at, $shouldParse = false)
+    function formattedCreatedAt($created_at, $shouldParse = false)
     {
         if ($shouldParse)
             $created_at = Carbon::parse($created_at);
@@ -214,7 +209,7 @@ if (!function_exists('zipFiles')) {
 if (!function_exists('generateAPIKey')) {
     function generateAPIKey()
     {
-        $data['api_key'] = encryptData(Config::get('kdadeltariq.root_key'), Config::get('kdadeltariq.private_key'));
+        $data['api_key'] = encryptData(Config::get('global.root_key'), Config::get('global.private_key'));
         Storage::disk('local')->put('api_key.json', json_encode($data));
     }
 }
@@ -223,73 +218,7 @@ if (!function_exists('readAPIKey')) {
     function readAPIKey()
     {
         $apiKey = json_decode(Storage::disk('local')->get('api_key.json'), true);
-        return $apiKey['api_key'];
-    }
-}
-
-if (!function_exists('sendFCMNotiffication')) {
-    /**
-     * @param $locale string the preferd locale to recieve message
-     * @param $tokens array registration ids as array
-     * @param $title string notification title
-     * @param $message string notification message
-     * @param $topic string notification topic
-     * @param $payLoad array notification payload
-     * @param $isDataMessage bool if true send firbase data message notification else normal notification
-     * @return bool the status of sending the notification
-     */
-    function sendFCMNotiffication($locale, $tokens, $title, $message, $topic, $payLoad = null, $isDataMessage = true): bool
-    {
-        if ($payLoad == null)
-            $payLoad = array();
-        $payLoad['topic'] = $topic;
-        $url = 'https://fcm.googleapis.com/fcm/send';
-        $serverKey = env('FCM_SERVER_KEY');
-        $data = [
-            // "topic" => $topic,
-            "registration_ids" => $tokens,
-        ];
-        if ($isDataMessage) {
-            $payLoad["body"] = __($message, [], $locale);
-            $payLoad["title"] = __($title, [], $locale);
-            $data["data"] = $payLoad;
-        } else {
-            $data["notification"] = [
-                "body" => __($message, [], $locale),
-                "title" => __($title, [], $locale),
-            ];
-            $data["data"] = $payLoad;
-        }
-        $encodedData = json_encode($data);
-
-        $headers = [
-            "Authorization: key=" . $serverKey,
-            "Content-Type: application/json",
-            'Accept: application/json',
-            "project_id" => "marasil-11389",
-            "sender_id" => 1078554782370,
-        ];
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
-        // Disabling SSL Certificate support temporarly
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $encodedData);
-        // Execute post
-        $result = curl_exec($ch);
-        // Close connection
-        curl_close($ch);
-        // Log::info("push {$result}/nerror /n" . curl_error($ch) . "/nResponse /n" . curl_getinfo($ch, CURLINFO_HTTP_CODE));
-        if ($result === FALSE) {
-            // die('Curl failed: ' . curl_error($ch));
-            return false;
-        } else {
-            return true;
-        }
+        return $apiKey['api_key']?:1234;
     }
 }
 
@@ -328,35 +257,7 @@ if (!function_exists('searchMultipleLanguages')) {
     }
 }
 
-if (!function_exists('stringfyErrors')) {
-    function stringfyErrors($errors)
-    {
-        $groupedErrors = [];
-        foreach (Arr::dot($errors) as $key => $value) {
-            // Key Values as values is an array
-            $groupedErrors[Str::before($key, '.')][] = $value;
-            // Array of string with key in start of each value
-            // $groupedErrors[] = Str::before($key, '.') . "**" . $value;
-        }
-        return $groupedErrors;
-    }
-}
-
-if (!function_exists('apiSuccess')) {
-    function apiSuccess($data, $pagination = [], $extras = [], $message = null, $code = 200): JsonResponse
-    {
-        return response()->apiResponse($data, array(), $pagination, $extras, $message ?? __('Data Found'), true, $code);
-    }
-}
-
-if (!function_exists('apiErrors')) {
-    function apiErrors($errors, $extras = [], $message = null, $code = 200): JsonResponse
-    {
-        $errors = is_array($errors) ? stringfyErrors($errors) : $errors;
-        return response()->apiResponse(array(), $errors, [], $extras, is_array($message) ? reset($message) : $message, false, $code);
-    }
-}
-
+# Send SMS
 if (!function_exists('sendSMS')) {
     function sendSMS($message, $mobile)
     {
@@ -366,7 +267,7 @@ if (!function_exists('sendSMS')) {
         $encodedauthdata = "MTEwMTkzODA0NzY6Z3MydjtCKERfMy9CaHU6MTUxOQ==";
         $result = ['sms' => true];
 
-        if (!config('kdadeltariq.sms') == "local") {
+        if (!config('global.sms') == "local") {
             $guzzelClient = new Client();
             $response = $guzzelClient->request('POST', 'http://weapi.connekio.com/sms/single', [
                 'json' => [
@@ -399,6 +300,7 @@ if (!function_exists('sendSMS')) {
     }
 }
 
+# Send OTP Mail
 if (!function_exists('sendOtpMail')) {
     function sendOtpMail($code, $email)
     {
@@ -409,94 +311,6 @@ if (!function_exists('sendOtpMail')) {
         return $sentMessage instanceof SentMessage;
     }
 }
-
-if (!function_exists('clientAbilities')) {
-    /**
-     * intial abilities set for client
-     */
-    function providerAbilitiesclientAbilities(): array
-    {
-        return [
-            AbilitiesConstant::CLIENT,
-        ];
-    }
-}
-
-if (!function_exists('providerAbilities')) {
-    /**
-     * intial abilities set for provider
-     */
-    function providerAbilities(): array
-    {
-        return [
-            AbilitiesConstant::PROVIDER,
-        ];
-    }
-}
-
-if (!function_exists('adminAbilities')) {
-    /**
-     * intial abilities set for admin
-     */
-    function adminAbilities(): array
-    {
-        $abilities = generateDashboardAdminAbilities();
-        array_push($abilities, AbilitiesConstant::ADMIN);
-        return $abilities;
-    }
-}
-
-if (!function_exists('generateDashboardAdminAbilities')) {
-    function generateDashboardAdminAbilities()
-    {
-        $abilities = array();
-        // modules with full main actions
-        $dashboardModules = array_values(DashboardModulesConstant::getModulesForMainActions());
-        $dashboardModulesActions = array_values(DashboardModulesActionsConstant::getMainActions());
-        foreach ($dashboardModules as $module) {
-            $abilities[] = $module;
-            foreach ($dashboardModulesActions as $action) {
-                $abilities[] = $module . ' ' . $action;
-            }
-        }
-        // single module with spesific actions
-        $settingModule = DashboardModulesConstant::SETTING;
-        $settingModuleActions = array_values(DashboardModulesActionsConstant::getSettingActions());
-        $abilities[] = $settingModule;
-        foreach ($settingModuleActions as $action) {
-            $abilities[] = $settingModule . ' ' . $action;
-        }
-        return $abilities;
-    }
-}
-if (!function_exists('checkDashboardAdminAbilities')) {
-    function checkDashboardAdminAbilities($userCurrentAbilities, $adminFullAbilitites)
-    {
-        $abilities = array();
-        $dashboardModules = array_values(DashboardModulesConstant::getDashboardModules());
-        foreach ($dashboardModules as $module) {
-            $temp = [
-                "parent_key" => $module,
-                "has_permission" => in_array($module, $userCurrentAbilities),
-                "permission" => array(),
-            ];
-            foreach ($adminFullAbilitites as $ability) {
-                if (!str($ability)->contains($module)) {
-                    continue;
-                }
-                $temp['permission'][] = [
-                    "key" => str($ability)->replaceFirst($module . ' ', ''),
-                    "has_permission" => in_array($ability, $userCurrentAbilities),
-                ];
-            }
-            $abilities[] = $temp;
-        }
-        return $abilities;
-    }
-}
-
-
-
 
 # HANDLE IMAGES
 if (!function_exists('uploadImage')) {
@@ -540,6 +354,8 @@ if (! function_exists('moveTempImage')) {
     }
 }
 
+
+# Handle Select2
 if (!function_exists('toMap')) {
     function toMap(Traversable $iterator, string $key = 'id', string $value = 'name'): array
     {
@@ -552,6 +368,7 @@ if (!function_exists('toMap')) {
     }
 }
 
+# Remove Style From HTML Element
 if (!function_exists('remove_style')) {
     function remove_style($data)
     {
@@ -559,6 +376,7 @@ if (!function_exists('remove_style')) {
     }
 }
 
+# Handle Set And Get Setting
 if (!function_exists('setting')) {
     function setting($key, $value = null, $default = null)
     {

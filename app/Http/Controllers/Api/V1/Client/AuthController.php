@@ -51,7 +51,7 @@ class AuthController extends Controller
     {
         return $this->respondWithModelData(
             new ClientResource(
-                $this->authClientService->login($request, clientAbilities())
+                $this->authClientService->login($request)
             )
         );
     }
@@ -69,7 +69,7 @@ class AuthController extends Controller
     {
         return $this->respondWithModelData(
             new ClientResource(
-                $this->authClientService->register($request, clientAbilities())
+                $this->authClientService->register($request)
             )
         );
     }
@@ -135,7 +135,7 @@ class AuthController extends Controller
      */
     public function resetpassword(ResetPasswordRequest $request): JsonResponse
     {
-        return $this->authClientService->resetPassword($request, clientAbilities());
+        return $this->authClientService->resetPassword($request);
     }
 
     /**
@@ -149,7 +149,7 @@ class AuthController extends Controller
      */
     public function changePassword(ChangePasswordRequest $request): JsonResponse
     {
-        return $this->authClientService->changePassword($request, clientAbilities());
+        return $this->authClientService->changePassword($request);
     }
 
     /**
@@ -165,7 +165,7 @@ class AuthController extends Controller
     {
         return $this->respondWithModelData(
             new ClientResource(
-                $this->authClientService->forgetPassword($request, clientAbilities())
+                $this->authClientService->forgetPassword($request)
             )
         );
     }

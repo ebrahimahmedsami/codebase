@@ -48,7 +48,7 @@ class AuthController extends Controller
     {
         return $this->respondWithModelData(
             new AdminResource(
-                $this->authAdminService->login($request, adminAbilities())
+                $this->authAdminService->login($request)
             )
         );
     }
@@ -114,7 +114,7 @@ class AuthController extends Controller
      */
     public function resetpassword(ResetPasswordRequest $request): JsonResponse
     {
-        return $this->authAdminService->resetPassword($request, AdminAbilities());
+        return $this->authAdminService->resetPassword($request);
     }
 
     /**
@@ -128,7 +128,7 @@ class AuthController extends Controller
      */
     public function changePassword(ChangePasswordRequest $request): JsonResponse
     {
-        return $this->authAdminService->changePassword($request, AdminAbilities());
+        return $this->authAdminService->changePassword($request);
     }
 
     /**
@@ -144,7 +144,7 @@ class AuthController extends Controller
     {
         return $this->respondWithModelData(
             new AdminResource(
-                $this->authAdminService->forgetPassword($request, AdminAbilities())
+                $this->authAdminService->forgetPassword($request)
             )
         );
     }

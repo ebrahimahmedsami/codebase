@@ -29,7 +29,7 @@ abstract class AuthAbstract
 
     public function __construct(User $model)
     {
-        $this->loginRequireSendOTP = config('kdadeltariq.login_require_otp');
+        $this->loginRequireSendOTP = config('global.login_require_otp');
         $this->model = $model;
     }
 
@@ -43,7 +43,7 @@ abstract class AuthAbstract
         if(!$user->isActive())
             throw AuthException::accountStatusDeactive(['deactive' => [__("Account Deactive")]]);
 
-        $user->access_token = $user->createToken('kdadeltariq',$abilities ?? [])->plainTextToken;
+        $user->access_token = $user->createToken('snctumToken',$abilities ?? [])->plainTextToken;
         $this->addTokenExpiration($user->access_token);
 
         if($this->loginRequireSendOTP)
@@ -108,7 +108,7 @@ abstract class AuthAbstract
         if (is_null($user))
             throw AuthException::userNotFound(['unauthorized' => [__("Unauthorized")]]);
 
-        $user->access_token = is_null($user->currentAccessToken()) ? $user->createToken('kdadeltariq', $abilities ?? [] )->plainTextToken : $user->currentAccessToken();
+        $user->access_token = is_null($user->currentAccessToken()) ? $user->createToken('snctumToken', $abilities ?? [] )->plainTextToken : $user->currentAccessToken();
         return $this->handelOTPMethod($user);
     }
 
@@ -129,7 +129,7 @@ abstract class AuthAbstract
 
             $user->currentAccessToken()->delete();
 
-            $user->access_token = $user->createToken('kdadeltariq', $abilities ?? [] )->plainTextToken;
+            $user->access_token = $user->createToken('snctumToken', $abilities ?? [] )->plainTextToken;
             $this->addTokenExpiration($user->access_token);
             return $this->respondWithArray(array("access_token" => $user->access_token));
 
@@ -151,7 +151,7 @@ abstract class AuthAbstract
         $user->password = Hash::make($request->password);
         $user->save();
         $user->currentAccessToken()->delete();
-        $user->access_token = $user->createToken('kdadeltariq', $abilities ?? [])->plainTextToken;
+        $user->access_token = $user->createToken('snctumToken', $abilities ?? [])->plainTextToken;
         $this->addTokenExpiration($user->access_token);
         return $this->respondWithArray(array("access_token" => $user->access_token));
     }

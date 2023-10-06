@@ -20,7 +20,7 @@ use Illuminate\Http\Request;
 /**
  * @group App Provider
  * Manage Provider App Apis
- * 
+ *
  * @subGroup Auth
  * @subgroupDescription Auth Cycle Apis
  */
@@ -39,7 +39,7 @@ class AuthController extends Controller
 
     /**
      * Provider Login.
-     * 
+     *
      * an API which Offers a mean to login a provider
      * @unauthenticated
      * @header Api-Key xx
@@ -50,14 +50,14 @@ class AuthController extends Controller
     {
         return $this->respondWithModelData(
             new ProviderResource(
-                $this->authProviderService->login($request, providerAbilities())
+                $this->authProviderService->login($request)
             )
         );
     }
 
     /**
      * Provider Register.
-     * 
+     *
      * an API which Offers a mean to register a new Provider
      * @unauthenticated
      * @header Api-Key xx
@@ -68,15 +68,15 @@ class AuthController extends Controller
     {
         return $this->respondWithModelData(
             new ProviderResource(
-                $this->authProviderService->register($request, providerAbilities())
+                $this->authProviderService->register($request)
             )
         );
     }
 
     /**
      * Send OTP To Mobile Number.
-     * 
-     * an API which Offers a mean to Send OTP To Mobile Number. 
+     *
+     * an API which Offers a mean to Send OTP To Mobile Number.
      * @unauthenticated
      * @header Api-Key xx
      * @header Api-Version v1
@@ -93,8 +93,8 @@ class AuthController extends Controller
 
     /**
      * Re-Send OTP.
-     * 
-     * an API which Offers a mean to Re-Send OTP. 
+     *
+     * an API which Offers a mean to Re-Send OTP.
      * @authenticated
      * @header Api-Key xx
      * @header Api-Version v1
@@ -112,7 +112,7 @@ class AuthController extends Controller
 
     /**
      * OTP Verification.
-     * 
+     *
      * an API which Offers a mean to verify user otp
      * @authenticated
      * @header Api-Key xx
@@ -126,8 +126,8 @@ class AuthController extends Controller
 
     /**
      * Provider New Password.
-     * 
-     * an API which Offers a mean to set new password for logged out providers after verification step.  
+     *
+     * an API which Offers a mean to set new password for logged out providers after verification step.
      * @authenticated
      * @header Api-Key xx
      * @header Api-Version v1
@@ -135,13 +135,13 @@ class AuthController extends Controller
      */
     public function resetpassword(ResetPasswordRequest $request):JsonResponse
     {
-        return $this->authProviderService->resetPassword($request,providerAbilities());
+        return $this->authProviderService->resetPassword($request);
     }
 
     /**
      * Provider Change Password.
-     * 
-     * an API which Offers a mean to Change password for logged in Provider.  
+     *
+     * an API which Offers a mean to Change password for logged in Provider.
      * @authenticated
      * @header Api-Key xx
      * @header Api-Version v1
@@ -149,13 +149,13 @@ class AuthController extends Controller
      */
     public function changePassword(ChangePasswordRequest $request): JsonResponse
     {
-        return $this->authProviderService->changePassword($request,providerAbilities());
+        return $this->authProviderService->changePassword($request);
     }
 
     /**
      * Provider Forget Password.
-     * 
-     * an API which Offers a mean to reset Provider password for logged out Provideres. 
+     *
+     * an API which Offers a mean to reset Provider password for logged out Provideres.
      * @unauthenticated
      * @header Api-Key xx
      * @header Api-Version v1
@@ -165,15 +165,15 @@ class AuthController extends Controller
     {
         return $this->respondWithModelData(
             new ProviderResource(
-                $this->authProviderService->forgetPassword($request, providerAbilities())
+                $this->authProviderService->forgetPassword($request)
             )
         );
     }
 
     /**
      * Provider Change Mobile.
-     * 
-     * an API which Offers a mean to change Provider mobile number. 
+     *
+     * an API which Offers a mean to change Provider mobile number.
      * @authenticated
      * @header Api-Key xx
      * @header Api-Version v1
@@ -190,7 +190,7 @@ class AuthController extends Controller
 
     /**
      * Provider Profile.
-     * 
+     *
      * an API which Offers a mean to login a Provider
      * @authenticated
      * @header Api-Key xx
@@ -208,7 +208,7 @@ class AuthController extends Controller
 
     /**
      * Provider logout.
-     * 
+     *
      * an API which Offers a mean to logout a Provider
      * @authenticated
      * @header Api-Key xx
@@ -225,7 +225,7 @@ class AuthController extends Controller
 
     /**
      * Provider Delete Account.
-     * 
+     *
      * an API which Offers a mean to delete a Provider account
      * @authenticated
      * @header Api-Key xx
