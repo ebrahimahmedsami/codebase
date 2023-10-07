@@ -1,13 +1,18 @@
 <?php
 
+use App\Actions\Transaction\MyFatoorahAction;
+use App\Enum\Transaction\PaymentMethodsEnum;
+use App\Enum\Transaction\TransactionReasonEnum;
 use App\Mail\OTPMail;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Mail\SentMessage;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 if (!function_exists('getLocales')) {
     /**
@@ -30,6 +35,13 @@ if (!function_exists('activeGuard')) {
 
         }
         return null;
+    }
+}
+
+if (!function_exists('get_current_lang')) {
+    function get_current_lang()
+    {
+        return App::getLocale();
     }
 }
 
@@ -218,7 +230,7 @@ if (!function_exists('readAPIKey')) {
     function readAPIKey()
     {
         $apiKey = json_decode(Storage::disk('local')->get('api_key.json'), true);
-        return $apiKey['api_key']?:1234;
+        return $apiKey['api_key'] ?: 1234;
     }
 }
 
@@ -324,8 +336,8 @@ if (!function_exists('uploadImage')) {
     }
 }
 
-if (! function_exists('moveTempImage')) {
-    function moveTempImage($collections_name, ?Model $toModel, $newCollectionName, $disk = 'public' , $clearOld = false)
+if (!function_exists('moveTempImage')) {
+    function moveTempImage($collections_name, ?Model $toModel, $newCollectionName, $disk = 'public', $clearOld = false)
     {
 
         if ($clearOld) {
@@ -385,5 +397,38 @@ if (!function_exists('setting')) {
         }
 
         return (new App\Helpers\Setting())->{$key};
+    }
+}
+
+# Start Transaction
+if (!function_exists('myFatoorahTransaction')) {
+    function myFatoorahTransaction(array $data,float|int $amount)
+    {
+        $transaction = getTransaction(
+            transactionData: $data,
+            amount: $amount
+        );
+
+        $myFatoorah = MyFatoorahAction::instance();
+        [$status, $response] = $myFatoorah->makeInvoice($transaction);
+
+        return $response;
+    }
+}
+
+if (!function_exists('getTransaction')) {
+
+    function getTransaction(array $transactionData,float|int $amount)
+    {
+        $invoice_number = str_pad(mt_rand(1, 9999999999), 10, '0', STR_PAD_LEFT);
+        $transactionData['invoice_number'] = $invoice_number;
+
+        return auth(activeGuard())->user()?->transactions()->create([
+            'data' => $transactionData,
+            'pay_id' => Str::uuid(),
+            'payment_method' => PaymentMethodsEnum::ONLINE,
+            'amount' => $amount,
+            'transaction_reasons' => TransactionReasonEnum::PAY_ORDER,
+        ]);
     }
 }

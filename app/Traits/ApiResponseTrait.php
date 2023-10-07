@@ -29,7 +29,7 @@ trait ApiResponseTrait
      */
     protected function respondWithArray($data, array $headers = []): JsonResponse
     {
-        return response()->json($data, $data['status'], $headers);
+        return response()->json($data, $data['status'] ?? 200, $headers);
     }
 
     /**

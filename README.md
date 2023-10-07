@@ -15,6 +15,10 @@ Roles, Permissions, Wallet, Chat, Notification(Mail,Pusher,Firebase,database), s
 2. [x] Provider
 3. [x] Driver
 
+# MyFatoorah Payment Using Example
+    myFatoorahTransaction(array: $data, float|int $amount);
+    # This Will Return A Response Of Transaction If (Failed Or Successed)
+
 # Wallet Using Example
 
     auth('admin')->user()

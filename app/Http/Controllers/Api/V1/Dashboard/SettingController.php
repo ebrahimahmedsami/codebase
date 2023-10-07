@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Dashboard;
 
 use App\Http\Controllers\Api\BaseApiController;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Dashboard\RoleRequest;
 use App\Http\Requests\Dashboard\SettingRequest;
 use App\Http\Resources\Api\Setting\SettingResource;
@@ -10,14 +11,19 @@ use App\Repositories\Contracts\SettingContract;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 
-class SettingController extends BaseApiController
+class SettingController extends Controller
 {
     /**
      * @param SettingContract $repository
      */
     public function __construct(SettingContract $repository)
     {
-        parent::__construct($repository, SettingResource::class, 'setting');
+//        parent::__construct($repository, SettingResource::class, 'setting');
+    }
+
+    public function index(){
+        return myFatoorahTransaction([],50);
+
     }
 
     /**
